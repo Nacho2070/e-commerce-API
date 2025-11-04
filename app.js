@@ -10,13 +10,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/users', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/products', product);
 app.use('/api/categorias', categoryRoutes);
 
 const Port = process.env.PORT || 3000;
 
-// Conectar a la base de datos antes de arrancar el servidor
 try{
     await connectDB();
     app.listen(Port, () => {

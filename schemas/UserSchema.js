@@ -6,8 +6,7 @@ const AddressSchema = new mongoose.Schema({
   city: String,
   state: String,
   postalCode: String,
-  country: String,
-  phone: String
+  country: String
 }, { _id: false });
 
 const ProfileSchema = new mongoose.Schema({

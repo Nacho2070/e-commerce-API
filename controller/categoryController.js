@@ -59,13 +59,25 @@ export const deleteCategory = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   try {
-    const { id } = req.params;
-    // Obtener productos y conteo en paralelo
-    const [products, totalProducts] = await Promise.all([
-      Product.find({ category: id }).populate('category'),
-      Product.countDocuments({ category: id })
-    ]);
-    res.status(200).json({ success: true, totalProducts, data: products });
+   const stats = await Category.aggregate([
+          {
+        $lookup: {
+          from: 'products',
+          localField: '_id',
+          foreignField: 'category',
+          as: 'products'
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          totalProducts: { $size: '$products' }
+        }
+      }
+        ]);
+
+        res.status(200).json({ success: true, data: stats });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

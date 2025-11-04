@@ -12,11 +12,12 @@ import {
 
 router.get('/', listCategories);
 router.post('/', createCategory);
+
+router.get('/estadisticas', getProductsByCategory);
+
 router.get('/:id', getCategory);
 router.put('/:id', updateCategory);
 router.delete('/:id', deleteCategory);
 
-// Productos en una categoría
-router.get('/:id/products', getProductsByCategory);
 
 export default router;
