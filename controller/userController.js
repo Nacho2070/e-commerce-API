@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import { Carrito } from '../models/CartModel.js'; '../models/CartModel.js';
 
 // Listar usuarios
 export const listUsers = async (req, res) => {
@@ -50,7 +51,10 @@ export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     const deleted = await User.findByIdAndDelete(id);
+
     if (!deleted) return res.status(404).json({ success: false, error: 'User not found' });
+    
+    await Carrito.deleteOne({ usuario: id });
     res.status(200).json({ success: true, data: deleted });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

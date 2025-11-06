@@ -14,7 +14,7 @@ const ProductSchema = new mongoose.Schema({
     brand: String, // Para el filtro por marca
     reviews: [{ // Subdocumentos o referencia, aquí optamos por subdocumentos de referencia
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Review'
+        ref: 'Resena'
     }]
 }, { timestamps: true });
 export default ProductSchema;

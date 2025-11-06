@@ -60,7 +60,7 @@ export const deleteCategory = async (req, res) => {
 export const getProductsByCategory = async (req, res) => {
   try {
    const stats = await Category.aggregate([
-          {
+      {
         $lookup: {
           from: 'products',
           localField: '_id',
