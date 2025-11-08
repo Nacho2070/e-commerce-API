@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import { Carrito } from '../models/CartModel.js'; '../models/CartModel.js';
-
+import jwt from 'jsonwebtoken';
+import { encriptPass, validatePass } from "../services/password.service.js";
+import { generateToken } from "../services/auth.service.js";
 // Listar usuarios
 export const listUsers = async (req, res) => {
   try {
@@ -89,5 +91,50 @@ export const removeAddress = async (req, res) => {
     res.status(200).json({ success: true, data: user });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validar campos
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email y contraseña son obligatorios'
+      });
+    }
+
+    const user = await User.findOne({ email });
+    
+    if (await validatePass(password, user.password)) {
+    
+      const jwtToken = generateToken({
+      id: user._id,
+      email: user.email,
+      rol: user.role,
+    });
+
+      res.json({
+        success: true,
+        data: {
+          _id: user._id,
+          nombre: user.name,
+          email: user.email,
+          direccion: user.addresses.line1,
+          telefono: user.phone,
+          rol: user.role,
+          token: jwtToken
+        }
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        error: 'Credenciales inválidas'
+      });
+    }
+  } catch (error) {
+    next(error);
   }
 };

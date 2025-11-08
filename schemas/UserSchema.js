@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const AddressSchema = new mongoose.Schema({
-  line1: { type: String, required: true },
-  line2: String,
+  line1: { type: String, required: true },  
   city: String,
   state: String,
   postalCode: String,

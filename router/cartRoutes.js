@@ -10,14 +10,14 @@ import { validateToken } from "../services/auth.service.js";
 
 export const carritoRoutes = express.Router();
 
-carritoRoutes.route("/vaciar/:userId").delete(/*validateToken,*/ vaciarCarrito);
+carritoRoutes.route("/vaciar/:userId").delete(validateToken, vaciarCarrito);
 
 carritoRoutes
   .route("/:userId")
-  .get(/*validateToken,*/ obtenerCarrito)
-  .post(/*validateToken,*/ agregarOActualizarItem);
+  .get(validateToken, obtenerCarrito)
+  .post(validateToken, agregarOActualizarItem);
 
-carritoRoutes.route("/:userId/:productoId").delete(/*validateToken,*/ eliminarItem);
+carritoRoutes.route("/:userId/:productoId").delete(validateToken, eliminarItem);
 
-carritoRoutes.route("/:userId/total").get(/*validateToken,*/calcularTotalCarrito);
+carritoRoutes.route("/:userId/total").get(validateToken,calcularTotalCarrito);
 export default carritoRoutes;

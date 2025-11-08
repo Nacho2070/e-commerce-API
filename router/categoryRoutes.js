@@ -9,15 +9,16 @@ import {
   deleteCategory,
   getProductsByCategory
 } from '../controller/categoryController.js';
+import { validateToken,requireAdmin } from '../services/auth.service.js';
 
-router.get('/', listCategories);
-router.post('/', createCategory);
+router.get('/', validateToken, listCategories);
+router.post('/',validateToken, requireAdmin,createCategory);
 
-router.get('/estadisticas', getProductsByCategory);
+router.get('/estadisticas',validateToken, getProductsByCategory);
 
-router.get('/:id', getCategory);
-router.put('/:id', updateCategory);
-router.delete('/:id', deleteCategory);
+router.get('/:id',validateToken, requireAdmin,getCategory);
+router.put('/:id', validateToken, requireAdmin,updateCategory);
+router.delete('/:id',validateToken, requireAdmin, deleteCategory);
 
 
 export default router;

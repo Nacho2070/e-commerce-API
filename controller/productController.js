@@ -97,57 +97,47 @@ export const filterProducts = async (req, res) => {
   }
 };
 
-// Productos más reseñados (top N)
+// Productos más reseñados
 export const topProducts = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 10;
 
-        // Cargar todos y ordenar por longitud del array reviews (sencillo y robust)
         const topProductsList = await Product.aggregate([
             {
-                // [$lookup] 1. Unir la colección 'products' con la colección 'reviews'
-                // para acceder a los datos de calificación.
+                
                 $lookup: {
-                    from: 'reviews', // Nombre de la colección de reseñas (minúsculas, plural)
-                    localField: 'reviews', // Campo en la colección Producto (el array de IDs)
-                    foreignField: '_id', // Campo en la colección Review
-                    as: 'reviewDetails' // Nombre del nuevo array que contendrá las reseñas
+                    from: 'reviews',
+                    localField: 'reviews', 
+                    foreignField: '_id', 
+                    as: 'reviewDetails' 
                 }
             },
             {
-                // [$match] 2. Opcional: Filtrar productos que no tienen ninguna reseña
-                // $ne: 0 (implícito, dado que queremos reseñados)
                 $match: {
-                    'reviewDetails.0': { $exists: true } // Solo productos con al menos una reseña
+                    'reviewDetails.0': { $exists: true } 
                 }
             },
             {
-                // [$unwind] 3. Desestructurar el array 'reviewDetails'. 
-                // Esto crea un documento por cada reseña que tiene el producto.
                 $unwind: '$reviewDetails' 
             },
-            {
-                // [$group] 4. Agrupar nuevamente por el ID del producto y calcular métricas.
+            {            
                 $group: {
                     _id: '$_id',
-                    name: { $first: '$name' }, // Mantener el nombre del producto
+                    name: { $first: '$name' }, 
                     brand: { $first: '$brand' },
                     price: { $first: '$price' },
                     
-                    // [$avg] Calcular el promedio de las calificaciones
+                  
                     avgRating: { $avg: '$reviewDetails.rating' },
-                    
-                    // [$sum / $count] Contar el número total de reseñas
+              
                     reviewCount: { $sum: 1 } 
                 }
             },
             {
-                // [$sort] 5. Ordenar: Primero por promedio de calificación (descendente) 
-                // y luego por cantidad de reseñas (desempate).
+              
                 $sort: { avgRating: -1, reviewCount: -1 } 
             },
             {
-                // [$limit] 6. Limitar los resultados al Top N (10 por defecto)
                 $limit: limit 
             }
         ]);
@@ -158,7 +148,6 @@ export const topProducts = async (req, res) => {
     }
 };
 
-// PATCH /:id/stock -> actualizar stock (valor absoluto con `stock` o ajuste con `adjust`)
 export const updateStock = async (req, res) => {
     try {
         const { id } = req.params;
@@ -185,45 +174,3 @@ export const updateStock = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
-
-/*
-//Producto mas resenado
-
-export const productoMasResenado = async (req, res) => {
-  try {
-    const resultado = await Producto.aggregate([
-      {
-        $lookup: {
-          from: "resenas",
-          localField: "_id",
-          foreignField: "producto",
-          as: "reseñas"
-        }
-      },
-      {
-        $addFields: {
-          cantidadResenas: { $size: "$reseñas" }
-        }
-      },
-      { $sort: { cantidadResenas: -1 } },
-      { $limit: 1 },
-      {
-        $project: {
-          nombre: 1,
-          descripcion: 1,
-          precio: 1,
-          cantidadResenas: 1
-        }
-      }
-    ]);
-
-    if (!resultado.length) {
-      return res.status(404).json({ message: "No hay productos con reseñas" });
-    }
-
-    res.status(200).json(resultado[0]);
-  } catch (err) {
-    res.status(500).json({ message: "Error al obtener el producto más reseñado", details: err.message });
-  }
-};
-*/

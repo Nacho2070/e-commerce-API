@@ -7,8 +7,10 @@ import {
     obtenerResena,
     actualizarResena,
     eliminarResena,
-    promedioCalificacionesPorProducto
+    promedioCalificacionesPorProducto,
+    allResenas
 } from '../controller/reviewController.js';
+import { requireAdmin, validateToken } from '../services/auth.service.js';
 
 // Reseñas de un producto
 router.get('/product/:productId', listarResenasPorProducto);
@@ -17,15 +19,10 @@ router.get('/product/:productId', listarResenasPorProducto);
 router.get('/top', promedioCalificacionesPorProducto);
 
 // CRUD de reseñas
-router.post('/', crearResena);
-router.get('/', async (req, res) => {
-    // listing all handled in controller via dynamic import earlier or via model; keep simple here
-    const { Resena } = await import('../models/ReviewModel.js');
-    const resenas = await Resena.find().populate('usuario', 'nombre email').populate('producto', 'nombre');
-    res.status(200).json({ success: true, data: resenas });
-});
+router.post('/',validateToken, crearResena);
+router.get('/', allResenas);
 router.get('/:id', obtenerResena);
-router.put('/:id', actualizarResena);
-router.delete('/:id', eliminarResena);
+router.put('/:id',validateToken,requireAdmin, actualizarResena);
+router.delete('/:id',validateToken, eliminarResena);
 
 export default router;

@@ -7,6 +7,7 @@ import categoryRoutes from "./router/categoryRoutes.js";
 import cartRoutes from "./router/cartRoutes.js";
 import orderRoutes from "./router/orderRoutes.js";
 import reviewRoutes from "./router/reviewRoutes.js";
+import 'dotenv/config';
 
 const app = express();
 

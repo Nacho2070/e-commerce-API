@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 const secret = process.env.JWT_SECRET || "default-secret";
 
 export const generateToken = (user) => {
-  return jwt.sign({ id: user._id, rol: user.rol }, secret, { expiresIn: "1h" });
+  const roles = user.role ?? user.rol ?? "customer";
+  return jwt.sign({ id: user._id, role: roles }, secret, { expiresIn: process.env.JTW_EXPIRES_IN || "1h" });
 };
 
 export const validateToken = (req, res, next) => {
@@ -14,14 +15,14 @@ export const validateToken = (req, res, next) => {
 
   jwt.verify(token, secret, (err, decoded) => {
     if (err) return res.status(403).json({ message: "Token inválido" });
-    req.user = decoded; //id y rol
+    req.user = decoded; //id, role
     next();
   });
 };
 
 // Middleware para admin
 export const requireAdmin = (req, res, next) => {
-  if (req.user.rol !== "administrador")
+  if (req.user.role !== "admin")
     return res.status(403).json({ message: "Se requiere rol de administrador" });
   next();
 };

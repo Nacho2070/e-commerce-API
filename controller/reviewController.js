@@ -146,3 +146,15 @@ export const promedioCalificacionesPorProducto = async (req, res) => {
         res.status(500).json({ error: "Error al calcular promedio", details: err.message });
     }
 };
+
+export const allResenas = async (req, res) => {
+    try {
+        const ResenaList  = await Resena.find()
+            .populate('usuario', 'nombre email')
+            .populate('producto', 'nombre');
+        res.status(200).json({ success: true, data: ResenaList });
+    
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
