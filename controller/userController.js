@@ -27,13 +27,21 @@ export const getUser = async (req, res) => {
 
 // Crear usuario
 export const createUser = async (req, res) => {
-  try {
-    const payload = req.body;
-    const created = await User.create(payload);
-    res.status(201).json({ success: true, data: created });
-  } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
-  }
+    try {
+        const payload = req.body;
+
+        const hashedPassword = await encriptPass(payload.password);
+
+        payload.password = hashedPassword;
+        
+        const created = await User.create(payload);
+        created.password = undefined; 
+        
+        res.status(201).json({ success: true, data: created });
+    } catch (error) {
+        const statusCode = error.name === 'ValidationError' ? 400 : 500;
+        res.status(statusCode).json({ success: false, error: error.message });
+    }
 };
 
 // Actualizar usuario

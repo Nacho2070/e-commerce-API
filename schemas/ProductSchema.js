@@ -12,7 +12,7 @@ const ProductSchema = new mongoose.Schema({
     price: { type: Number, required: true, min: 0 },
     stock: { type: Number, required: true, min: 0 },
     brand: String, // Para el filtro por marca
-    reviews: [{ // Subdocumentos o referencia, aquí optamos por subdocumentos de referencia
+    reviews: [{ 
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Resena'
     }]

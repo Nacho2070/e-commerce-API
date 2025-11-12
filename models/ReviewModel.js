@@ -12,7 +12,7 @@ const resenaSchema = new mongoose.Schema({
         required: true,
     },
     calificacion: {
-        type: Number, //Calificacion entre 1 y 10
+        type: Number,
         min: 1,
         max: 10,
         required: true,

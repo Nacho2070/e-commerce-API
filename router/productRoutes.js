@@ -16,7 +16,7 @@ import { requireAdmin, validateToken } from "../services/auth.service.js";
 // Listar productos con categoría
 router.get('/', listProducts);
 
-// Filtrar por precio y marca -> /filtro
+// Filtrar por precio y marca
 router.get('/filtro', filterProducts);
 
 // Top productos más reseñados
@@ -28,7 +28,7 @@ router.post('/', validateToken, requireAdmin, createProduct);
 router.put('/:id',validateToken, requireAdmin, updateProduct);
 router.delete('/:id',validateToken, requireAdmin, deleteProduct);
 
-// Actualizar stock (PATCH /:id/stock)
+// Actualizar stock
 router.patch('/:id/stock',validateToken, requireAdmin, updateStock);
 
 export default router;

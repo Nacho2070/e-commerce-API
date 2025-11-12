@@ -12,17 +12,25 @@ export const crearResena = async (req, res) => {
             //"items.producto": producto
         });
         
-        console.log(pedidos);
         if (!pedidos || pedidos.length === 0) {
             return res.status(400).json({
                 error: "No puedes reseñar un producto que no has comprado"
             });
         }
-
      
         const nuevaResena = await Resena.create({ usuario, producto, calificacion, comentario });
-        await Product.findByIdAndUpdate(producto, { $push: { reseñas: nuevaResena._id } });
-
+        
+        const updatedProduct = await Product.findByIdAndUpdate(
+            producto, 
+            { 
+                $push: { reviews: nuevaResena._id }, 
+                $new: true
+            });
+        
+        if (!updatedProduct) {        
+             await Resena.findByIdAndDelete(nuevaResena._id);
+             return res.status(404).json({ error: "El producto al que intentas reseñar no existe." });
+        }
         res.status(201).json(nuevaResena);
 
     } catch (err) {

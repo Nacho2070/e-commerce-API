@@ -22,13 +22,13 @@ router.get('/stats',validateToken,requireAdmin, orderStats);
 // Pedidos de un usuario
 router.get('/user/:userId',validateToken, getOrdersByUser);
 
-// CRUD estándar
+// CRUD
 router.post('/', validateToken, createOrder);
 router.get('/:id',validateToken, getOrder);
 router.put('/:id',validateToken,requireAdmin, updateOrder);
 router.delete('/:id',validateToken,requireAdmin, deleteOrder);
 
-// Actualizar estado (PATCH /:id/status)
+// Actualizar estado
 router.patch('/:id/status',validateToken,requireAdmin, updateOrderStatus);
 
 

@@ -1,6 +1,7 @@
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 import mongoose from 'mongoose';
+import { Resena } from '../models/ReviewModel.js';
 
 // Listar todos los productos con su categoría
 export const listProducts = async (req, res) => {
@@ -102,43 +103,43 @@ export const topProducts = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 10;
 
-        const topProductsList = await Product.aggregate([
+        const topProductsList = await Resena.aggregate([
             {
-                
-                $lookup: {
-                    from: 'reviews',
-                    localField: 'reviews', 
-                    foreignField: '_id', 
-                    as: 'reviewDetails' 
-                }
-            },
-            {
-                $match: {
-                    'reviewDetails.0': { $exists: true } 
-                }
-            },
-            {
-                $unwind: '$reviewDetails' 
-            },
-            {            
-                $group: {
-                    _id: '$_id',
-                    name: { $first: '$name' }, 
-                    brand: { $first: '$brand' },
-                    price: { $first: '$price' },
-                    
-                  
-                    avgRating: { $avg: '$reviewDetails.rating' },
               
+                $group: {
+                    _id: '$producto', 
+                   
+                    avgRating: { $avg: '$calificacion' }, 
+                   
                     reviewCount: { $sum: 1 } 
                 }
             },
             {
-              
                 $sort: { avgRating: -1, reviewCount: -1 } 
             },
             {
-                $limit: limit 
+                $limit: limit
+            },
+            {
+                $lookup: {
+                    from: 'products', 
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
+            {                
+                $unwind: '$productDetails'
+            },
+            {             
+                $project: {
+                    _id: '$_id',
+                    name: '$productDetails.name',
+                    brand: '$productDetails.brand',
+                    price: '$productDetails.price',
+                    avgRating: { $round: ['$avgRating', 2] },
+                    reviewCount: '$reviewCount'
+                }
             }
         ]);
 

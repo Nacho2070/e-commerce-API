@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
-// Prefer using an env var for the URI
 const DEFAULT_URI = 'mongodb+srv://user:KDwVYjpMf4wwRkRh@ecommerce.a5zyzto.mongodb.net/ecommerce?retryWrites=true&w=majority';
+const LOCAL_URI = 'mongodb://localhost:27017/E-commerce';
 
 export async function connectDB() {
-  const uri = process.env.MONGO_URI || DEFAULT_URI;
+  const uri = process.env.MONGO_URI || LOCAL_URI;
   try {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB');
