@@ -78,17 +78,25 @@ export const deleteProduct = async (req, res) => {
 //Buscar por rango de precio
 export const filterProducts = async (req, res) => {
   try {
-     const { min, max, marca } = req.params; 
+    const { min, max, marca } = req.query;
     const filtro = {};
-
-    // Filtrar por rango de precio
+    
     if (min || max) {
-      filtro.precio = {};
-      if (min) filtro.precio.$gte = Number(min);
-      if (max) filtro.precio.$lte = Number(max);
+      filtro.price = {};
+      if (min) filtro.price.$gte = Number(min);
+      if (max) filtro.price.$lte = Number(max);
+    }
+
+    if (marca) {
+      filtro.brand = new RegExp(marca, "i");
     }
 
     const productos = await Product.find(filtro);
+
+    if (productos.length === 0) {
+      return res.status(404).json({ message: "No se encontraron productos con esos filtros" });
+    }
+
     return res.status(200).json(productos);
   } catch (err) {
     return res.status(500).json({

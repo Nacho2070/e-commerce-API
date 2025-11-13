@@ -117,7 +117,7 @@ export const updateOrder = async (req, res) => {
           return res.status(404).json({ error: `Producto con ID ${item.producto} no encontrado` });
         }
 
-        const subtotal = producto.precio * item.cantidad;
+        const subtotal = producto.price * item.cantidad;
         total += subtotal;
 
         itemsActualizados.push({
@@ -137,7 +137,7 @@ export const updateOrder = async (req, res) => {
 
     const pedidoFinal = await Pedido.findById(pedidoActualizado._id)
       .populate("usuario", "nombre email")
-      .populate("items.producto", "nombre precio");
+      .populate("items.producto", "name price");
 
     return res.status(200).json(pedidoFinal);
   } catch (err) {

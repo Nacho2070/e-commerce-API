@@ -48,11 +48,26 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-    if (!updated) return res.status(404).json({ success: false, error: 'User not found' });
-    res.status(200).json({ success: true, data: updated });
+    const { name, phone, addresses, profile } = req.body;
+    
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (addresses) updateData.addresses = addresses;
+    if (profile) updateData.profile = profile;
+
+    const userUpdated = await User.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true
+    }).select("-password"); 
+
+    if (!userUpdated) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    return res.status(200).json({ success: true, data: userUpdated });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    return res.status(400).json({ success: false, error: error.message });
   }
 };
 

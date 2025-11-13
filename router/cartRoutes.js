@@ -9,11 +9,11 @@ import {
 import { validateToken } from "../services/auth.service.js";
 
 export const carritoRoutes = express.Router();
-
+// Vaciar el carrito
 carritoRoutes.route("/vaciar/:userId").delete(validateToken, vaciarCarrito);
-
+// Eliminar un item del carrito
 carritoRoutes.route("/:userId/:productoId").delete(validateToken, eliminarItem);
-
+// Calcular el total del carrito
 carritoRoutes.route("/:userId/total").get(validateToken,calcularTotalCarrito);
 
 carritoRoutes
